@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BoardModel } from "../../models/BoardModel";
 import { GameStatus, LEVELS } from "./minesweeper.utils";
 import { NEIGHBOURS } from "../../utils/utils";
 import Board from "../board/baoard.component";
+import { StyledMessageContainer } from "./message.style";
 
 export default function Minesweeper() {
   const [gameState, setGameState] = useState({
@@ -15,11 +16,14 @@ export default function Minesweeper() {
     ),
   });
   const [cellLeft, setCellLeft] = useState(
-    gameState.difficulty.rows * gameState.difficulty.columns -
-      gameState.difficulty.mines
+    LEVELS.EASY.rows * LEVELS.EASY.columns - LEVELS.EASY.mines
   );
-
   const [nFlags, setNFlags] = useState(0);
+
+  useEffect(() => {
+    if (cellLeft === 0)
+      setGameState((prev) => ({ ...prev, status: GameStatus.VICTORY }));
+  }, [cellLeft]);
 
   const showAndExpand = (row: number, col: number): void => {
     const cell = gameState.board.field[row][col];
@@ -54,8 +58,37 @@ export default function Minesweeper() {
     }
   };
 
+  const resetGame = () => {
+    setGameState((prev) => ({
+      ...prev,
+      status: GameStatus.INPROGRESS,
+      board: new BoardModel(
+        prev.difficulty.rows,
+        prev.difficulty.columns,
+        prev.difficulty.mines
+      ),
+    }));
+    setCellLeft(
+      gameState.difficulty.rows * gameState.difficulty.columns -
+        gameState.difficulty.mines
+    );
+    setNFlags(0);
+  };
+
   return (
-    <div>
+    <div style={{ position: "relative" }}>
+      {gameState.status === GameStatus.VICTORY && (
+        <StyledMessageContainer>
+          <h2>VICTORY</h2>
+          <button onClick={resetGame}>play again</button>
+        </StyledMessageContainer>
+      )}
+      {gameState.status === GameStatus.GAMEOVER && (
+        <StyledMessageContainer>
+          <h2>GAMEOVER</h2>
+          <button onClick={resetGame}>try again</button>
+        </StyledMessageContainer>
+      )}
       <Board
         {...gameState.board}
         showAndExpand={showAndExpand}
