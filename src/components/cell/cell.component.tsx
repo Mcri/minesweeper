@@ -11,6 +11,8 @@ type CellProps = {
   hasFlag: boolean;
   hasMine: boolean;
   proximity: number;
+  onLeftClick: (row: number, column: number) => void;
+  onRightClick: (row: number, column: number) => void;
 };
 
 export default memo(function Cell({
@@ -20,6 +22,8 @@ export default memo(function Cell({
   hasFlag,
   hasMine,
   proximity,
+  onLeftClick,
+  onRightClick,
 }: CellProps) {
   const bg = (() => {
     const CAMP_COLORS_PAIR = getCampColorsPair(isRevealed);
@@ -32,12 +36,25 @@ export default memo(function Cell({
 
   const mineColor = COLORS[Math.round(Math.random() * COLORS.length)];
 
+  const handleLeftClick = () => {
+    onLeftClick(y, x);
+  };
+
+  const handleRightClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    onRightClick(y, x);
+  };
+
   return (
     <StyledCell
       bg={bg}
       color={COLORS[proximity]}
       mineColor={mineColor}
       isRevealed={isRevealed}
+      onClick={handleLeftClick}
+      onContextMenu={handleRightClick}
     >
       {hasFlag && !isRevealed && <FontAwesomeIcon icon={faFlag} id="flag" />}
       {hasMine && isRevealed && <FontAwesomeIcon icon={faBomb} />}
