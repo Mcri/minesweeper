@@ -3,7 +3,8 @@ import { BoardModel } from "../../models/BoardModel";
 import { GameStatus, LEVELS } from "./minesweeper.utils";
 import { NEIGHBOURS } from "../../utils/utils";
 import Board from "../board/baoard.component";
-import { StyledMessageContainer } from "./message.style";
+import { GameTopbar } from "./topbar/topbar.component";
+import { MessageBox } from "./messagebox/message.component";
 
 export default function Minesweeper() {
   const [gameState, setGameState] = useState({
@@ -58,7 +59,7 @@ export default function Minesweeper() {
     }
   };
 
-  const resetGame = () => {
+  const resetGame = (): void => {
     setGameState((prev) => ({
       ...prev,
       status: GameStatus.INPROGRESS,
@@ -76,24 +77,21 @@ export default function Minesweeper() {
   };
 
   return (
-    <div style={{ position: "relative" }}>
-      {gameState.status === GameStatus.VICTORY && (
-        <StyledMessageContainer>
-          <h2>VICTORY</h2>
-          <button onClick={resetGame}>play again</button>
-        </StyledMessageContainer>
-      )}
-      {gameState.status === GameStatus.GAMEOVER && (
-        <StyledMessageContainer>
-          <h2>GAMEOVER</h2>
-          <button onClick={resetGame}>try again</button>
-        </StyledMessageContainer>
-      )}
-      <Board
-        {...gameState.board}
-        showAndExpand={showAndExpand}
-        toggleFlag={toggleFlag}
+    <main>
+      <GameTopbar
+        nFlags={gameState.difficulty.mines - nFlags}
+        reset={resetGame}
       />
-    </div>
+      <section style={{ position: "relative" }}>
+        {gameState.status !== GameStatus.INPROGRESS && (
+          <MessageBox reset={resetGame} state={gameState.status} />
+        )}
+        <Board
+          {...gameState.board}
+          showAndExpand={showAndExpand}
+          toggleFlag={toggleFlag}
+        />
+      </section>
+    </main>
   );
 }
