@@ -8,14 +8,14 @@ export const StyledMessageContainer = styled.div`
   position: absolute;
   flex-direction: column;
   z-index: 300;
-  background-color: rgba(255, 255, 255, 0.233);
+  background-color: rgba(255, 255, 255, 0.3);
   width: 100%;
   height: 100%;
   bottom: 0;
   h2 {
     display: block;
     font-size: 3rem;
-    color: #e07918;
+    color: #2d61f1;
     margin-bottom: 10px;
   }
   button {

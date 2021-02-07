@@ -1,5 +1,5 @@
 import { CellModel } from "./CellModel";
-import {Coords, NEIGHBOURS} from '../utils/utils';
+import {Coords, NEIGHBOURS} from '../constants';
 
 export class BoardModel {
   constructor(

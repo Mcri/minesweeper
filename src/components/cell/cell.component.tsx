@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag, faBomb } from "@fortawesome/free-solid-svg-icons";
-import { COLORS, getCampColorsPair } from "./cell.config";
+import { COLORS, getCampColorsPair } from "../../constants";
 import StyledCell from "./cell.style";
 
 type CellProps = {

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { BoardModel } from "../../models/BoardModel";
-import { GameStatus, LEVELS } from "./minesweeper.utils";
-import { NEIGHBOURS } from "../../utils/utils";
+import { NEIGHBOURS, GameStatus, LEVELS } from "../../constants";
 import Board from "../board/baoard.component";
 import { GameTopbar } from "./topbar/topbar.component";
 import { MessageBox } from "./messagebox/message.component";
+import { Levels } from "./levels/levels.component";
 
 export default function Minesweeper() {
   const [gameState, setGameState] = useState({
-    difficulty: LEVELS.EASY,
+    level: LEVELS.EASY,
     status: GameStatus.INPROGRESS,
     board: new BoardModel(
       LEVELS.EASY.rows,
@@ -20,6 +20,15 @@ export default function Minesweeper() {
     LEVELS.EASY.rows * LEVELS.EASY.columns - LEVELS.EASY.mines
   );
   const [nFlags, setNFlags] = useState(0);
+
+  useEffect(() => {
+    if (gameState.status === GameStatus.INPROGRESS) {
+      setCellLeft(
+        gameState.level.rows * gameState.level.columns - gameState.level.mines
+      );
+      setNFlags(0);
+    }
+  }, [gameState]);
 
   useEffect(() => {
     if (cellLeft === 0)
@@ -52,7 +61,7 @@ export default function Minesweeper() {
       if (cell.hasFlag) {
         setNFlags((prev) => prev - 1);
         cell.toggleFlag();
-      } else if (nFlags < gameState.difficulty.mines) {
+      } else if (nFlags < gameState.level.mines) {
         setNFlags((prev) => prev + 1);
         cell.toggleFlag();
       }
@@ -64,24 +73,33 @@ export default function Minesweeper() {
       ...prev,
       status: GameStatus.INPROGRESS,
       board: new BoardModel(
-        prev.difficulty.rows,
-        prev.difficulty.columns,
-        prev.difficulty.mines
+        prev.level.rows,
+        prev.level.columns,
+        prev.level.mines
       ),
     }));
-    setCellLeft(
-      gameState.difficulty.rows * gameState.difficulty.columns -
-        gameState.difficulty.mines
-    );
-    setNFlags(0);
+  };
+
+  const changeLevel = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): void => {
+    const value = (e.target as HTMLButtonElement).value;
+    setGameState({
+      level: LEVELS[value],
+      status: GameStatus.INPROGRESS,
+      board: new BoardModel(
+        LEVELS[value].rows,
+        LEVELS[value].columns,
+        LEVELS[value].mines
+      ),
+    });
   };
 
   return (
     <main>
-      <GameTopbar
-        nFlags={gameState.difficulty.mines - nFlags}
-        reset={resetGame}
-      />
+      <h1>Minesweeper</h1>
+      <Levels changeLevel={changeLevel} />
+      <GameTopbar nFlags={gameState.level.mines - nFlags} reset={resetGame} />
       <section style={{ position: "relative" }}>
         {gameState.status !== GameStatus.INPROGRESS && (
           <MessageBox reset={resetGame} state={gameState.status} />

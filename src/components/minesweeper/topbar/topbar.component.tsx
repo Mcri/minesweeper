@@ -14,7 +14,6 @@ export function GameTopbar({ nFlags, reset }: GameTopbarProps) {
       <span>
         <FontAwesomeIcon icon={faFlag} id="flag" /> {nFlags}
       </span>
-      <span>Minesweeper</span>
       <span id="restart" onClick={reset}>
         RESTART
       </span>

@@ -1,5 +1,5 @@
 import React from "react";
-import { GameStatus } from "../minesweeper.utils";
+import { GameStatus } from "../../../constants";
 import { StyledMessageContainer } from "./message.style";
 
 type MessageBoxProps = {
