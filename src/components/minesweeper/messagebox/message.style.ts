@@ -8,14 +8,14 @@ export const StyledMessageContainer = styled.div`
   position: absolute;
   flex-direction: column;
   z-index: 300;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.2);
   width: 100%;
   height: 100%;
   bottom: 0;
   h2 {
     display: block;
     font-size: 3rem;
-    color: #2d61f1;
+    color: rgb(56, 82, 62);
     margin-bottom: 10px;
   }
   button {
@@ -23,10 +23,10 @@ export const StyledMessageContainer = styled.div`
     padding: 10px 20px;
     font-size: 1.1rem;
     border: none;
-    background-color: #2d61f1;
+    background-color: rgb(207, 203, 56);
     color: white;
     :hover {
-      background-color: #3b6df8;
+      background-color: rgb(201, 197, 24);
     }
   }
 `;

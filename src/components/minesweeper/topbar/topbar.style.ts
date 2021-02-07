@@ -12,5 +12,6 @@ export const StyledTopbar = styled.section`
   }
   > #restart:hover {
     text-decoration: underline;
+    color: rgb(207, 203, 56);
   }
 `;

@@ -17,6 +17,7 @@ export default styled.div<StyledCellProp>`
   font-weight: 600;
   color: ${(props) => props.color};
   background-color: ${(props) => props.bg};
+  
   > svg#flag {
     color: rgb(204, 19, 19);
   }

@@ -9,7 +9,7 @@ type MessageBoxProps = {
 
 export function MessageBox({ state, reset }: MessageBoxProps) {
   const message = (() => {
-    if (state === GameStatus.GAMEOVER) return "GAMEOVER";
+    if (state === GameStatus.GAMEOVER) return "GAME OVER";
     if (state === GameStatus.VICTORY) return "VICTORY";
   })();
   return (

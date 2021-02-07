@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BoardModel } from "../../models/BoardModel";
 import { NEIGHBOURS, GameStatus, LEVELS } from "../../constants";
 import Board from "../board/baoard.component";
@@ -35,38 +35,44 @@ export default function Minesweeper() {
       setGameState((prev) => ({ ...prev, status: GameStatus.VICTORY }));
   }, [cellLeft]);
 
-  const showAndExpand = (row: number, col: number): void => {
-    const cell = gameState.board.field[row][col];
-    if (cell.isRevealed || cell.hasFlag) return;
-    if (cell.hasMine) {
-      gameState.board.showAllMines();
-      setGameState((prev) => ({ ...prev, status: GameStatus.GAMEOVER }));
-      return;
-    }
-
-    cell.reveal();
-    setCellLeft((prev) => prev - 1);
-    if (cell.proximity > 0) return;
-
-    for (let [c, r] of NEIGHBOURS) {
-      c += col;
-      r += row;
-      if (gameState.board.checkLimits(r, c)) showAndExpand(r, c);
-    }
-  };
-
-  const toggleFlag = (row: number, col: number) => {
-    if (gameState.status === GameStatus.INPROGRESS) {
-      let cell = gameState.board.field[row][col];
-      if (cell.hasFlag) {
-        setNFlags((prev) => prev - 1);
-        cell.toggleFlag();
-      } else if (nFlags < gameState.level.mines) {
-        setNFlags((prev) => prev + 1);
-        cell.toggleFlag();
+  const showAndExpand = useCallback(
+    (row: number, col: number): void => {
+      const cell = gameState.board.field[row][col];
+      if (cell.isRevealed || cell.hasFlag) return;
+      if (cell.hasMine) {
+        gameState.board.showAllMines();
+        setGameState((prev) => ({ ...prev, status: GameStatus.GAMEOVER }));
+        return;
       }
-    }
-  };
+
+      cell.reveal();
+      setCellLeft((prev) => prev - 1);
+      if (cell.proximity > 0) return;
+
+      for (let [c, r] of NEIGHBOURS) {
+        c += col;
+        r += row;
+        if (gameState.board.checkLimits(r, c)) showAndExpand(r, c);
+      }
+    },
+    [gameState.board]
+  );
+
+  const toggleFlag = useCallback(
+    (row: number, col: number) => {
+      if (gameState.status === GameStatus.INPROGRESS) {
+        let cell = gameState.board.field[row][col];
+        if (cell.hasFlag) {
+          setNFlags((prev) => prev - 1);
+          cell.toggleFlag();
+        } else if (nFlags < gameState.level.mines) {
+          setNFlags((prev) => prev + 1);
+          cell.toggleFlag();
+        }
+      }
+    },
+    [gameState.board.field, gameState.level.mines, gameState.status, nFlags]
+  );
 
   const resetGame = (): void => {
     setGameState((prev) => ({
@@ -84,21 +90,18 @@ export default function Minesweeper() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     const value = (e.target as HTMLButtonElement).value;
+    const level = LEVELS[value];
     setGameState({
-      level: LEVELS[value],
+      level,
       status: GameStatus.INPROGRESS,
-      board: new BoardModel(
-        LEVELS[value].rows,
-        LEVELS[value].columns,
-        LEVELS[value].mines
-      ),
+      board: new BoardModel(level.rows, level.columns, level.mines),
     });
   };
 
   return (
     <main>
       <h1>Minesweeper</h1>
-      <Levels changeLevel={changeLevel} />
+      <Levels changeLevel={changeLevel} active={gameState.level.difficulty} />
       <GameTopbar nFlags={gameState.level.mines - nFlags} reset={resetGame} />
       <section style={{ position: "relative" }}>
         {gameState.status !== GameStatus.INPROGRESS && (
