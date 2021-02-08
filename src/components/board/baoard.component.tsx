@@ -1,28 +1,57 @@
-import React from "react";
-import Cell from "../cell/cell.component";
-import { CellModel } from "../../models/CellModel";
+import React, { useCallback, useContext } from "react";
+import CellView from "../cell/cell.component";
+import { MinesweeperContext } from "../../providers/minesweeper.provider";
+import { GameStatus } from "../../types";
+import { showAllMines, showAndExpand, toggleFlag } from "../../helpers";
+import { ActionType } from "../../state/actions";
 
-type BoardProps = {
-  field: CellModel[][];
-  showAndExpand: (row: number, column: number) => void;
-  toggleFlag: (row: number, column: number) => void;
-};
+export default function Board() {
+  const [{ board, status, cellLeft, level, nFlags }, dispatch] = useContext(
+    MinesweeperContext
+  );
 
-export default function Board({
-  field,
-  showAndExpand,
-  toggleFlag,
-}: BoardProps) {
+  const revealCell = useCallback(
+    (row: number, col: number): void => {
+      if (status === GameStatus.INPROGRESS) {
+        const cell = board[row][col];
+        if (cell.hasMine) {
+          dispatch({
+            type: ActionType.SET_GAME_OVER,
+            payload: { board: showAllMines(board) },
+          });
+          return;
+        }
+        dispatch({
+          type: ActionType.REVEAL_CELLS,
+          payload: showAndExpand([col, row], board, cellLeft),
+        });
+      }
+    },
+    [board, cellLeft, dispatch, status]
+  );
+
+  const placeFlag = useCallback(
+    (row: number, col: number) => {
+      if (status === GameStatus.INPROGRESS && nFlags <= level.mines) {
+        dispatch({
+          type: ActionType.SET_FLAG,
+          payload: toggleFlag([col, row], board, nFlags, level.mines),
+        });
+      }
+    },
+    [board, dispatch, level.mines, nFlags, status]
+  );
+
   return (
     <div>
-      {field.map((row, y) => (
+      {board.map((row, y) => (
         <div key={`row-${y}`} style={{ display: "flex" }}>
           {row.map((cell, x) => (
-            <Cell
+            <CellView
               key={`col-${x}`}
               {...cell}
-              onLeftClick={showAndExpand}
-              onRightClick={toggleFlag}
+              onLeftClick={revealCell}
+              onRightClick={placeFlag}
             />
           ))}
         </div>

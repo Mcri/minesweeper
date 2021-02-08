@@ -1,10 +1,15 @@
 import React from "react";
 import Minesweeper from "./components/minesweeper/minesweeper.component";
+import { MinesweeperProvider } from "./providers/minesweeper.provider";
+import { reducer } from "./state/reducer";
+import { INITIAL_GAME_STATE } from "./constants";
 
 function App() {
   return (
     <div className="App">
-      <Minesweeper />
+      <MinesweeperProvider initialState={INITIAL_GAME_STATE} reducer={reducer}>
+        <Minesweeper />
+      </MinesweeperProvider>
     </div>
   );
 }

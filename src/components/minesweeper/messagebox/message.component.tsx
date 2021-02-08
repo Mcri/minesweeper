@@ -1,5 +1,5 @@
 import React from "react";
-import { GameStatus } from "../../../constants";
+import { GameStatus } from "../../../types";
 import { StyledMessageContainer } from "./message.style";
 
 type MessageBoxProps = {

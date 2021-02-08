@@ -1,117 +1,50 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { BoardModel } from "../../models/BoardModel";
-import { NEIGHBOURS, GameStatus, LEVELS } from "../../constants";
+import React, { useEffect, useContext } from "react";
 import Board from "../board/baoard.component";
 import { GameTopbar } from "./topbar/topbar.component";
 import { MessageBox } from "./messagebox/message.component";
+import { GameStatus } from "../../types";
+import { MinesweeperContext } from "../../providers/minesweeper.provider";
+import { ActionType } from "../../state/actions";
 import { Levels } from "./levels/levels.component";
+import { LEVELS } from "../../constants";
 
 export default function Minesweeper() {
-  const [gameState, setGameState] = useState({
-    level: LEVELS.EASY,
-    status: GameStatus.INPROGRESS,
-    board: new BoardModel(
-      LEVELS.EASY.rows,
-      LEVELS.EASY.columns,
-      LEVELS.EASY.mines
-    ),
-  });
-  const [cellLeft, setCellLeft] = useState(
-    LEVELS.EASY.rows * LEVELS.EASY.columns - LEVELS.EASY.mines
+  const [{ status, cellLeft, nFlags, level }, dispatch] = useContext(
+    MinesweeperContext
   );
-  const [nFlags, setNFlags] = useState(0);
 
   useEffect(() => {
-    if (gameState.status === GameStatus.INPROGRESS) {
-      setCellLeft(
-        gameState.level.rows * gameState.level.columns - gameState.level.mines
-      );
-      setNFlags(0);
-    }
-  }, [gameState]);
+    dispatch({ type: ActionType.BUILD_BOARD });
+  }, [dispatch]);
 
   useEffect(() => {
-    if (cellLeft === 0)
-      setGameState((prev) => ({ ...prev, status: GameStatus.VICTORY }));
-  }, [cellLeft]);
-
-  const showAndExpand = useCallback(
-    (row: number, col: number): void => {
-      const cell = gameState.board.field[row][col];
-      if (cell.isRevealed || cell.hasFlag) return;
-      if (cell.hasMine) {
-        gameState.board.showAllMines();
-        setGameState((prev) => ({ ...prev, status: GameStatus.GAMEOVER }));
-        return;
-      }
-
-      cell.reveal();
-      setCellLeft((prev) => prev - 1);
-      if (cell.proximity > 0) return;
-
-      for (let [c, r] of NEIGHBOURS) {
-        c += col;
-        r += row;
-        if (gameState.board.checkLimits(r, c)) showAndExpand(r, c);
-      }
-    },
-    [gameState.board]
-  );
-
-  const toggleFlag = useCallback(
-    (row: number, col: number) => {
-      if (gameState.status === GameStatus.INPROGRESS) {
-        let cell = gameState.board.field[row][col];
-        if (cell.hasFlag) {
-          setNFlags((prev) => prev - 1);
-          cell.toggleFlag();
-        } else if (nFlags < gameState.level.mines) {
-          setNFlags((prev) => prev + 1);
-          cell.toggleFlag();
-        }
-      }
-    },
-    [gameState.board.field, gameState.level.mines, gameState.status, nFlags]
-  );
+    if (cellLeft === 0) dispatch({ type: ActionType.SET_VICTORY });
+  }, [dispatch, cellLeft]);
 
   const resetGame = (): void => {
-    setGameState((prev) => ({
-      ...prev,
-      status: GameStatus.INPROGRESS,
-      board: new BoardModel(
-        prev.level.rows,
-        prev.level.columns,
-        prev.level.mines
-      ),
-    }));
+    dispatch({ type: ActionType.RESET_GAME });
   };
 
   const changeLevel = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
     const value = (e.target as HTMLButtonElement).value;
-    const level = LEVELS[value];
-    setGameState({
-      level,
-      status: GameStatus.INPROGRESS,
-      board: new BoardModel(level.rows, level.columns, level.mines),
+    dispatch({
+      type: ActionType.CHANGE_LEVEL,
+      payload: { level: LEVELS[value] },
     });
   };
 
   return (
     <main>
       <h1>Minesweeper</h1>
-      <Levels changeLevel={changeLevel} active={gameState.level.difficulty} />
-      <GameTopbar nFlags={gameState.level.mines - nFlags} reset={resetGame} />
+      <Levels changeLevel={changeLevel} active={level.difficulty} />
+      <GameTopbar nFlags={nFlags} reset={resetGame} />
       <section style={{ position: "relative" }}>
-        {gameState.status !== GameStatus.INPROGRESS && (
-          <MessageBox reset={resetGame} state={gameState.status} />
+        {status !== GameStatus.INPROGRESS && (
+          <MessageBox reset={resetGame} state={status} />
         )}
-        <Board
-          {...gameState.board}
-          showAndExpand={showAndExpand}
-          toggleFlag={toggleFlag}
-        />
+        <Board />
       </section>
     </main>
   );

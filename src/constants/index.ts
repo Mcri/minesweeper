@@ -1,4 +1,4 @@
-export type Coords = [x: number, y: number];
+import { Coords, GameState, GameStatus, Level } from "../types";
 
 export const NEIGHBOURS: Coords[] = [
   [-1, -1],
@@ -10,19 +10,6 @@ export const NEIGHBOURS: Coords[] = [
   [0, 1],
   [1, 1],
 ];
-
-export enum GameStatus {
-  INPROGRESS,
-  GAMEOVER,
-  VICTORY,
-}
-
-type Level = {
-  difficulty: string;
-  rows: number;
-  columns: number;
-  mines: number;
-};
 
 export const LEVELS: { [key: string]: Level } = {
   EASY: {
@@ -43,6 +30,14 @@ export const LEVELS: { [key: string]: Level } = {
     columns: 15,
     mines: 50,
   },
+};
+
+export const INITIAL_GAME_STATE: GameState = {
+  level: LEVELS.EASY,
+  status: GameStatus.INPROGRESS,
+  board: [],
+  nFlags: LEVELS.EASY.mines,
+  cellLeft: LEVELS.EASY.rows * LEVELS.EASY.columns - LEVELS.EASY.mines,
 };
 
 export const COLORS = [
