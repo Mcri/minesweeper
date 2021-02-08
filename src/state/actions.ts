@@ -10,15 +10,15 @@ export enum ActionType {
   CHANGE_LEVEL,
 }
 
-export interface RevealCellsAction {
+interface RevealCellsAction {
   type: ActionType.REVEAL_CELLS;
   payload: {
     board: Cell[][];
-    cellLeft: number;
+    cellsLeft: number;
   };
 }
 
-export interface SetFlagAction {
+interface SetFlagAction {
   type: ActionType.SET_FLAG;
   payload: {
     board: Cell[][];
@@ -26,29 +26,29 @@ export interface SetFlagAction {
   };
 }
 
-export interface SetGameOverAction {
+interface SetGameOverAction {
   type: ActionType.SET_GAME_OVER;
   payload: {
     board: Cell[][];
   };
 }
 
-export interface SetVictoryAction {
+interface SetVictoryAction {
   type: ActionType.SET_VICTORY;
 }
 
-export interface ResetGameAction {
+interface ResetGameAction {
   type: ActionType.RESET_GAME;
 }
 
-export interface ChangeLevelAction {
+interface ChangeLevelAction {
   type: ActionType.CHANGE_LEVEL;
   payload: {
     level: Level;
   };
 }
 
-export interface BuildBoardAction {
+interface BuildBoardAction {
   type: ActionType.BUILD_BOARD;
 }
 

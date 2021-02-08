@@ -21,9 +21,12 @@ export default styled.div<StyledCellProp>`
   > svg#flag {
     color: rgb(204, 19, 19);
   }
-  > svg {
-    color: ${(props) => props.mineColor};
-    font-size: 1.2rem;
+  > .mine {
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background: ${(props) => props.mineColor};
+    filter: drop-shadow(0 0.6mm 0.2mm rgba(0,0,0,0.5))
   }
   ::after {
     content: "";

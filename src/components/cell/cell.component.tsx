@@ -1,7 +1,8 @@
 import React, { memo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFlag, faBomb } from "@fortawesome/free-solid-svg-icons";
-import { COLORS, getCampColorsPair } from "../../constants";
+import { faFlag } from "@fortawesome/free-solid-svg-icons";
+import { COLORS } from "../../constants";
+import { defineCellColor } from "../../helpers";
 import StyledCell from "./cell.style";
 
 type CellProps = {
@@ -25,16 +26,9 @@ export default memo(function Cell({
   onLeftClick,
   onRightClick,
 }: CellProps) {
-  const bg = (() => {
-    const CAMP_COLORS_PAIR = getCampColorsPair(isRevealed);
-    let bg: string;
-    if (y % 2 === 0)
-      bg = x % 2 === 0 ? CAMP_COLORS_PAIR[0] : CAMP_COLORS_PAIR[1];
-    else bg = x % 2 === 0 ? CAMP_COLORS_PAIR[1] : CAMP_COLORS_PAIR[0];
-    return bg;
-  })();
+  const bg = defineCellColor(x, y, isRevealed);
 
-  const mineColor = COLORS[Math.round(Math.random() * COLORS.length)];
+  const mineColor = COLORS[Math.round(Math.random() * (COLORS.length - 1))];
 
   const handleLeftClick = () => {
     onLeftClick(y, x);
@@ -57,7 +51,7 @@ export default memo(function Cell({
       onContextMenu={handleRightClick}
     >
       {hasFlag && !isRevealed && <FontAwesomeIcon icon={faFlag} id="flag" />}
-      {hasMine && isRevealed && <FontAwesomeIcon icon={faBomb} />}
+      {hasMine && isRevealed && <div className="mine"></div>}
       {isRevealed && proximity > 0 && <p>{proximity}</p>}
     </StyledCell>
   );

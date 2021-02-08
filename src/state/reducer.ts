@@ -43,16 +43,17 @@ export const reducer = (state: GameState, action: GameAction): GameState => {
           state.level.rows,
           state.level.columns
         ),
-        cellLeft: state.level.columns * state.level.rows - state.level.mines,
+        cellsLeft: state.level.columns * state.level.rows - state.level.mines,
         nFlags: state.level.mines,
       };
     case ActionType.CHANGE_LEVEL:
       const { level } = action.payload;
       return {
         ...state,
+        status: GameStatus.INPROGRESS,
         level: level,
         board: buildBoard(level.mines, level.rows, level.columns),
-        cellLeft: level.columns * level.rows - level.mines,
+        cellsLeft: level.columns * level.rows - level.mines,
         nFlags: level.mines,
       };
     default:

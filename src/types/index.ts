@@ -27,5 +27,5 @@ export type GameState = {
   status: GameStatus;
   board: Cell[][];
   nFlags: number;
-  cellLeft: number;
+  cellsLeft: number;
 };

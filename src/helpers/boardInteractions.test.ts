@@ -1,27 +1,7 @@
+import { buildBoard, showAndExpand, toggleFlag } from ".";
 import { Cell } from "../types";
-import { buildBoard, showAndExpand, toggleFlag } from "./index";
 
 let board: Cell[][];
-
-describe("Build Board", () => {
-  beforeAll(() => {
-    board = buildBoard(15, 8, 10);
-  });
-
-  it("should return a matrix of n rows and m columns", () => {
-    expect(board.length).toBe(8);
-    expect(board[0].length).toBe(10);
-  });
-
-  it("should contain n mines", () => {
-    expect(
-      board.reduce(
-        (acc, row) => acc.concat(...row.filter((cell) => cell.hasMine)),
-        []
-      ).length
-    ).toBe(15);
-  });
-});
 
 describe("Cell Reveal", () => {
   describe("with no mine", () => {
@@ -30,7 +10,7 @@ describe("Cell Reveal", () => {
     });
 
     it("should return a cell left count equal to 0", () => {
-      expect(showAndExpand([0, 0], board, 10 * 10).cellLeft).toEqual(0);
+      expect(showAndExpand([0, 0], board, 10 * 10).cellsLeft).toEqual(0);
     });
 
     it("should return a new defined board", () => {
@@ -49,7 +29,7 @@ describe("Cell Reveal", () => {
 
     it("should reveal only the empty cells", () => {
       expect(
-        showAndExpand([0, 0], board, 10 * 10 - 1).cellLeft
+        showAndExpand([0, 0], board, 10 * 10 - 1).cellsLeft
       ).toBeLessThanOrEqual(1);
     });
   });
@@ -61,9 +41,9 @@ describe("Place Flag", () => {
   });
 
   it("should toggle flag", () => {
-    toggleFlag([0, 0], board, 5, 5);
+    toggleFlag([0, 0], board, 5);
     expect(board[0][0].hasFlag).toBe(true);
-    toggleFlag([0, 0], board, 5, 5);
+    toggleFlag([0, 0], board, 5);
     expect(board[0][0].hasFlag).toBe(false);
   });
 });
