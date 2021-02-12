@@ -13,31 +13,42 @@ export const reducer = (state: GameState, action: GameAction): GameState => {
           state.level.columns
         ),
       };
-    case ActionType.REVEAL_CELLS:
+    case ActionType.START_GAME:
       return {
         ...state,
-        ...action.payload,
-      };
-    case ActionType.SET_FLAG:
-      return {
-        ...state,
-        ...action.payload,
-      };
-    case ActionType.SET_GAME_OVER:
-      return {
-        ...state,
-        status: GameStatus.GAMEOVER,
-        ...action.payload,
+        status: GameStatus.IN_PROGRESS,
       };
     case ActionType.SET_VICTORY:
       return {
         ...state,
         status: GameStatus.VICTORY,
       };
+    case ActionType.SET_GAME_OVER:
+      return {
+        ...state,
+        status: GameStatus.GAME_OVER,
+        ...action.payload,
+      };
+    case ActionType.REVEAL_CELLS:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case ActionType.PLACE_FLAG:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case ActionType.REPLACE_MINE:
+      console.log("REPLACE MINE ON FIRST CLICK");
+      return {
+        ...state,
+        ...action.payload,
+      };
     case ActionType.RESET_GAME:
       return {
         ...state,
-        status: GameStatus.INPROGRESS,
+        status: GameStatus.TO_START,
         board: buildBoard(
           state.level.mines,
           state.level.rows,
@@ -49,9 +60,8 @@ export const reducer = (state: GameState, action: GameAction): GameState => {
     case ActionType.CHANGE_LEVEL:
       const { level } = action.payload;
       return {
-        ...state,
-        status: GameStatus.INPROGRESS,
-        level: level,
+        level,
+        status: GameStatus.TO_START,
         board: buildBoard(level.mines, level.rows, level.columns),
         cellsLeft: level.columns * level.rows - level.mines,
         nFlags: level.mines,

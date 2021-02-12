@@ -1,8 +1,8 @@
 import React from "react";
-import Minesweeper from "./components/minesweeper/minesweeper.component";
-import { MinesweeperProvider } from "./providers";
-import { reducer } from "./state";
-import { INITIAL_GAME_STATE } from "./constants";
+import Minesweeper from "./minesweeper/minesweeper.component";
+import { MinesweeperProvider } from "../providers";
+import { reducer } from "../state";
+import { INITIAL_GAME_STATE } from "../constants";
 
 function App() {
   return (

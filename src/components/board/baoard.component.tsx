@@ -1,8 +1,13 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import CellView from "../cell/cell.component";
 import { MinesweeperContext } from "../../providers";
 import { GameStatus } from "../../types";
-import { showAllMines, showAndExpand, toggleFlag } from "../../helpers";
+import {
+  showAllMines,
+  showAndExpand,
+  toggleFlag,
+  replaceMine,
+} from "../../helpers";
 import { ActionType } from "../../state";
 
 export default function Board() {
@@ -10,37 +15,39 @@ export default function Board() {
     MinesweeperContext
   );
 
-  const revealCell = useCallback(
-    (row: number, col: number): void => {
-      const cell = board[row][col];
-      if (status === GameStatus.INPROGRESS && !cell.hasFlag) {
-        if (cell.hasMine) {
-          dispatch({
-            type: ActionType.SET_GAME_OVER,
-            payload: showAllMines(board),
-          });
-          return;
-        }
+  const revealCell = (row: number, col: number): void => {
+    const cell = board[row][col];
+    if (cell.hasFlag || status > GameStatus.IN_PROGRESS) return;
+    if (status === GameStatus.TO_START) {
+      if (cell.hasMine) {
         dispatch({
-          type: ActionType.REVEAL_CELLS,
-          payload: showAndExpand([col, row], board, cellsLeft),
+          type: ActionType.REPLACE_MINE,
+          payload: replaceMine([col, row], board),
         });
       }
-    },
-    [board, cellsLeft, dispatch, status]
-  );
+      dispatch({ type: ActionType.START_GAME });
+    }
+    if (cell.hasMine) {
+      dispatch({
+        type: ActionType.SET_GAME_OVER,
+        payload: showAllMines(board),
+      });
+      return;
+    }
+    dispatch({
+      type: ActionType.REVEAL_CELLS,
+      payload: showAndExpand([col, row], board, cellsLeft),
+    });
+  };
 
-  const placeFlag = useCallback(
-    (row: number, col: number) => {
-      if (status === GameStatus.INPROGRESS && nFlags <= level.mines) {
-        dispatch({
-          type: ActionType.SET_FLAG,
-          payload: toggleFlag([col, row], board, nFlags),
-        });
-      }
-    },
-    [board, dispatch, level.mines, nFlags, status]
-  );
+  const placeFlag = (row: number, col: number) => {
+    if (status === GameStatus.IN_PROGRESS && nFlags <= level.mines) {
+      dispatch({
+        type: ActionType.PLACE_FLAG,
+        payload: toggleFlag([col, row], board, nFlags),
+      });
+    }
+  };
 
   return (
     <div>

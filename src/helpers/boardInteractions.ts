@@ -1,12 +1,47 @@
 import { NEIGHBOURS } from "../constants";
 import { Cell, Coords } from "../types";
-import { checkLimits, minesCoordinates } from "./boardSetup";
+import { checkLimits, setProximity } from "./boardSetup";
+
+export function getCoordsFirstFreeCell(
+  board: Cell[][]
+): [x: number, y: number] {
+  const rows = board.length;
+  const cols = board[0].length;
+  let x = 0;
+  let y = 0;
+  while (board[y][x].hasMine && y < rows) {
+    if (x >= cols) {
+      x = 0;
+      y++;
+    } else {
+      x++;
+    }
+  }
+  return [x, y];
+}
+
+export function replaceMine(
+  [x, y]: Coords,
+  board: Cell[][]
+): { board: Cell[][] } {
+  const updatedBoard = [...board];
+  let [fx, fy] = getCoordsFirstFreeCell(updatedBoard);
+
+  updatedBoard[y][x].hasMine = false;
+  setProximity([x, y], updatedBoard, -1);
+  updatedBoard[fy][fx].hasMine = true;
+  setProximity([fx, fy], updatedBoard, +1);
+
+  return { board: updatedBoard };
+}
 
 export function showAllMines(board: Cell[][]): { board: Cell[][] } {
   const updatedBoard = [...board];
-  for (let [x, y] of minesCoordinates) {
-    updatedBoard[y][x].isRevealed = true;
-  }
+  updatedBoard.forEach((row) =>
+    row.forEach((cell) => {
+      if (cell.hasMine) cell.isRevealed = true;
+    })
+  );
   return { board: updatedBoard };
 }
 

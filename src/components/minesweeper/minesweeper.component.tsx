@@ -3,7 +3,6 @@ import Board from "../board/baoard.component";
 import { GameTopbar } from "./topbar/topbar.component";
 import { MessageBox } from "./messagebox/message.component";
 import { Levels } from "./levels/levels.component";
-import { GameStatus } from "../../types";
 import { MinesweeperContext } from "../../providers";
 import { ActionType } from "../../state";
 
@@ -42,9 +41,7 @@ export default function Minesweeper() {
       <Levels changeLevel={changeLevel} active={level.difficulty} />
       <GameTopbar nFlags={nFlags} reset={resetGame} />
       <section style={{ position: "relative" }}>
-        {status !== GameStatus.INPROGRESS && (
-          <MessageBox reset={resetGame} state={status} />
-        )}
+        {status > 1 && <MessageBox reset={resetGame} state={status} />}
         <Board />
       </section>
     </main>

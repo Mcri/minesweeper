@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { COLORS } from "../../constants";
@@ -16,7 +16,7 @@ type CellProps = {
   onRightClick: (row: number, column: number) => void;
 };
 
-export default memo(function Cell({
+export default function Cell({
   x,
   y,
   isRevealed,
@@ -52,7 +52,7 @@ export default memo(function Cell({
     >
       {hasFlag && !isRevealed && <FontAwesomeIcon icon={faFlag} id="flag" />}
       {hasMine && isRevealed && <div className="mine"></div>}
-      {isRevealed && proximity > 0 && <p>{proximity}</p>}
+      {isRevealed && !hasMine && proximity > 0 && <p>{proximity}</p>}
     </StyledCell>
   );
-});
+}

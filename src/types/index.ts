@@ -1,8 +1,9 @@
 export type Coords = [x: number, y: number];
 
 export enum GameStatus {
-  INPROGRESS,
-  GAMEOVER,
+  TO_START,
+  IN_PROGRESS,
+  GAME_OVER,
   VICTORY,
 }
 

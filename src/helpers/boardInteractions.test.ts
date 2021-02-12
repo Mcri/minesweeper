@@ -1,5 +1,6 @@
 import { buildBoard, showAndExpand, toggleFlag } from ".";
 import { Cell } from "../types";
+import { getCoordsFirstFreeCell, replaceMine } from "./boardInteractions";
 
 let board: Cell[][];
 
@@ -45,5 +46,23 @@ describe("Place Flag", () => {
     expect(board[0][0].hasFlag).toBe(true);
     toggleFlag([0, 0], board, 5);
     expect(board[0][0].hasFlag).toBe(false);
+  });
+});
+
+describe("Replace Mine", () => {
+  beforeAll(() => {
+    board = buildBoard(0, 10, 10);
+    board[5][5].hasMine = true;
+  });
+
+  it("should return the coordinates of the first free cell", () => {
+    let [x, y] = getCoordsFirstFreeCell(board);
+    expect(board[y][x].hasMine).toBe(false);
+  });
+
+  it("should replace the mine", () => {
+    let upBoard = replaceMine([5, 5], board).board;
+    expect(upBoard[5][5].hasMine).toBe(false);
+    expect(upBoard[0][0].hasMine).toBe(true);
   });
 });

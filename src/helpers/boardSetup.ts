@@ -1,7 +1,7 @@
 import { NEIGHBOURS } from "../constants";
 import { Cell, Coords } from "../types";
 
-export let minesCoordinates: Coords[] = [];
+let minesCoordinates: Coords[] = [];
 
 function getRandomCoordinate(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -16,29 +16,29 @@ export function checkLimits(
   return row >= 0 && row <= rows - 1 && col >= 0 && col <= columns - 1;
 }
 
-function defineMineProximity(
-  board: Cell[][],
-  rows: number,
-  columns: number
-): void {
-  for (let [x, y] of minesCoordinates) {
-    for (let [c, r] of NEIGHBOURS) {
-      const row = y + r;
-      const col = x + c;
+export function setProximity([x, y]: Coords, board: Cell[][], toAdd: number) {
+  const rows = board.length;
+  const columns = board[0].length;
 
-      if (checkLimits([col, row], rows, columns) && !board[row][col].hasMine) {
-        board[row][col].proximity++;
-      }
+  for (let [c, r] of NEIGHBOURS) {
+    const row = y + r;
+    const col = x + c;
+    if (checkLimits([col, row], rows, columns)) {
+      let cell = board[row][col];
+      cell.proximity = cell.proximity + toAdd;
     }
   }
 }
 
-function placeMines(
-  nMines: number,
-  rows: number,
-  columns: number,
-  board: Cell[][]
-): void {
+export function defineMineProximity(board: Cell[][]): void {
+  for (let coords of minesCoordinates) {
+    setProximity(coords, board, +1);
+  }
+}
+
+function placeMines(nMines: number, board: Cell[][]): void {
+  const rows = board.length;
+  const columns = board[0].length;
   let counter = 0;
 
   while (counter < nMines) {
@@ -75,7 +75,7 @@ export function buildBoard(
         proximity: 0,
       });
   }
-  placeMines(nMines, rows, columns, board);
-  defineMineProximity(board, rows, columns);
+  placeMines(nMines, board);
+  defineMineProximity(board);
   return board;
 }

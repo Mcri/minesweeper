@@ -34,7 +34,7 @@ export const LEVELS: { [key: string]: Level } = {
 
 export const INITIAL_GAME_STATE: GameState = {
   level: LEVELS.EASY,
-  status: GameStatus.INPROGRESS,
+  status: GameStatus.TO_START,
   board: [],
   nFlags: LEVELS.EASY.mines,
   cellsLeft: LEVELS.EASY.rows * LEVELS.EASY.columns - LEVELS.EASY.mines,
