@@ -1,4 +1,4 @@
-import { NEIGHBOURS } from "../constants";
+import { BASE_CELL, NEIGHBOURS } from "../constants";
 import { Cell, Coords } from "../types";
 
 let minesCoordinates: Coords[] = [];
@@ -8,11 +8,10 @@ function getRandomCoordinate(min: number, max: number) {
 }
 
 export function checkLimits(
-  coords: Coords,
+  [col, row]: Coords,
   rows: number,
   columns: number
 ): boolean {
-  const [col, row] = coords;
   return row >= 0 && row <= rows - 1 && col >= 0 && col <= columns - 1;
 }
 
@@ -56,25 +55,26 @@ function placeMines(nMines: number, board: Cell[][]): void {
   }
 }
 
+function buildMatrix<T extends { x: number; y: number }>(
+  rows: number,
+  columns: number,
+  content: T
+): T[][] {
+  const board: T[][] = [];
+  for (let y = 0; y < rows; y++) {
+    board.push([]);
+    for (let x = 0; x < columns; x++) board[y].push({ ...content, x, y });
+  }
+  return board;
+}
+
 export function buildBoard(
   nMines: number,
   rows: number,
   columns: number
 ): Cell[][] {
   minesCoordinates = [];
-  const board: Cell[][] = [];
-  for (let y = 0; y < rows; y++) {
-    board.push([]);
-    for (let x = 0; x < columns; x++)
-      board[y].push({
-        x,
-        y,
-        hasMine: false,
-        hasFlag: false,
-        isRevealed: false,
-        proximity: 0,
-      });
-  }
+  const board: Cell[][] = buildMatrix(rows, columns, BASE_CELL);
   placeMines(nMines, board);
   defineMineProximity(board);
   return board;

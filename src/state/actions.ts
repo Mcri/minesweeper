@@ -1,4 +1,4 @@
-import { Cell, Level } from "../types";
+import { Level } from "../types";
 
 export enum ActionType {
   BUILD_BOARD,
@@ -12,66 +12,35 @@ export enum ActionType {
   REPLACE_MINE,
 }
 
-interface BuildBoardAction {
-  type: ActionType.BUILD_BOARD;
-}
-
-interface StartGameAction {
-  type: ActionType.START_GAME;
-}
-
-interface SetVictoryAction {
-  type: ActionType.SET_VICTORY;
-}
-
-interface SetGameOverAction {
-  type: ActionType.SET_GAME_OVER;
-  payload: {
-    board: Cell[][];
-  };
-}
-
-interface ResetGameAction {
-  type: ActionType.RESET_GAME;
-}
-
-interface ChangeLevelAction {
-  type: ActionType.CHANGE_LEVEL;
-  payload: {
-    level: Level;
-  };
-}
-
-interface RevealCellsAction {
-  type: ActionType.REVEAL_CELLS;
-  payload: {
-    board: Cell[][];
-    cellsLeft: number;
-  };
-}
-
-interface SetFlagAction {
-  type: ActionType.PLACE_FLAG;
-  payload: {
-    board: Cell[][];
-    nFlags: number;
-  };
-}
-
-interface ReplaceMineAction {
-  type: ActionType.REPLACE_MINE;
-  payload: {
-    board: Cell[][];
-  };
-}
-
 export type GameAction =
-  | BuildBoardAction
-  | StartGameAction
-  | SetVictoryAction
-  | SetGameOverAction
-  | ResetGameAction
-  | ChangeLevelAction
-  | RevealCellsAction
-  | SetFlagAction
-  | ReplaceMineAction;
+  | {
+      type: ActionType.BUILD_BOARD;
+    }
+  | {
+      type: ActionType.START_GAME;
+    }
+  | {
+      type: ActionType.SET_VICTORY;
+    }
+  | {
+      type: ActionType.SET_GAME_OVER;
+    }
+  | {
+      type: ActionType.RESET_GAME;
+    }
+  | {
+      type: ActionType.CHANGE_LEVEL;
+      level: Level;
+    }
+  | {
+      type: ActionType.REVEAL_CELLS;
+      coords: [x: number, y: number];
+    }
+  | {
+      type: ActionType.PLACE_FLAG;
+      coords: [x: number, y: number];
+    }
+  | {
+      type: ActionType.REPLACE_MINE;
+      coords: [x: number, y: number];
+    };

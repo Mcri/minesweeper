@@ -2,16 +2,10 @@ import React, { useContext } from "react";
 import CellView from "../cell/cell.component";
 import { MinesweeperContext } from "../../providers";
 import { GameStatus } from "../../types";
-import {
-  showAllMines,
-  showAndExpand,
-  toggleFlag,
-  replaceMine,
-} from "../../helpers";
 import { ActionType } from "../../state";
 
 export default function Board() {
-  const [{ board, status, cellsLeft, level, nFlags }, dispatch] = useContext(
+  const [{ board, status, level, nFlags }, dispatch] = useContext(
     MinesweeperContext
   );
 
@@ -19,24 +13,21 @@ export default function Board() {
     const cell = board[row][col];
     if (cell.hasFlag || status > GameStatus.IN_PROGRESS) return;
     if (status === GameStatus.TO_START) {
-      if (cell.hasMine) {
+      dispatch({ type: ActionType.START_GAME });
+      if (cell.hasMine)
         dispatch({
           type: ActionType.REPLACE_MINE,
-          payload: replaceMine([col, row], board),
+          coords: [col, row],
         });
+    } else {
+      if (cell.hasMine) {
+        dispatch({ type: ActionType.SET_GAME_OVER });
+        return;
       }
-      dispatch({ type: ActionType.START_GAME });
-    }
-    if (cell.hasMine) {
-      dispatch({
-        type: ActionType.SET_GAME_OVER,
-        payload: showAllMines(board),
-      });
-      return;
     }
     dispatch({
       type: ActionType.REVEAL_CELLS,
-      payload: showAndExpand([col, row], board, cellsLeft),
+      coords: [col, row],
     });
   };
 
@@ -44,7 +35,7 @@ export default function Board() {
     if (status === GameStatus.IN_PROGRESS && nFlags <= level.mines) {
       dispatch({
         type: ActionType.PLACE_FLAG,
-        payload: toggleFlag([col, row], board, nFlags),
+        coords: [col, row],
       });
     }
   };

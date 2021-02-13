@@ -1,6 +1,12 @@
 import { GameState, GameStatus } from "../types";
 import { GameAction, ActionType } from "./actions";
-import { buildBoard } from "../helpers";
+import {
+  buildBoard,
+  showAllMines,
+  showAndExpand,
+  toggleFlag,
+  replaceMine,
+} from "../helpers";
 
 export const reducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
@@ -27,23 +33,23 @@ export const reducer = (state: GameState, action: GameAction): GameState => {
       return {
         ...state,
         status: GameStatus.GAME_OVER,
-        ...action.payload,
+        ...showAllMines(state.board),
       };
     case ActionType.REVEAL_CELLS:
       return {
         ...state,
-        ...action.payload,
+        ...showAndExpand(action.coords, state.board, state.cellsLeft),
       };
     case ActionType.PLACE_FLAG:
       return {
         ...state,
-        ...action.payload,
+        ...toggleFlag(action.coords, state.board, state.nFlags),
       };
     case ActionType.REPLACE_MINE:
       console.log("REPLACE MINE ON FIRST CLICK");
       return {
         ...state,
-        ...action.payload,
+        ...replaceMine(action.coords, state.board),
       };
     case ActionType.RESET_GAME:
       return {
@@ -58,7 +64,7 @@ export const reducer = (state: GameState, action: GameAction): GameState => {
         nFlags: state.level.mines,
       };
     case ActionType.CHANGE_LEVEL:
-      const { level } = action.payload;
+      const { level } = action;
       return {
         level,
         status: GameStatus.TO_START,

@@ -1,4 +1,4 @@
-import { Coords, GameState, GameStatus, Level } from "../types";
+import { Cell, Coords, GameState, GameStatus, Level } from "../types";
 
 export const NEIGHBOURS: Coords[] = [
   [-1, -1],
@@ -38,6 +38,15 @@ export const INITIAL_GAME_STATE: GameState = {
   board: [],
   nFlags: LEVELS.EASY.mines,
   cellsLeft: LEVELS.EASY.rows * LEVELS.EASY.columns - LEVELS.EASY.mines,
+};
+
+export const BASE_CELL: Cell = {
+  x: 0,
+  y: 0,
+  hasMine: false,
+  hasFlag: false,
+  isRevealed: false,
+  proximity: 0,
 };
 
 export const COLORS = [

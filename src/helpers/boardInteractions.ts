@@ -20,11 +20,19 @@ export function getCoordsFirstFreeCell(
   return [x, y];
 }
 
+export function rebuildBoard(board: Cell[][]): Cell[][] {
+  return [
+    ...board.map((row) =>
+      row.reduce((acc: Cell[], cell: Cell) => acc.concat({ ...cell }), [])
+    ),
+  ];
+}
+
 export function replaceMine(
   [x, y]: Coords,
   board: Cell[][]
 ): { board: Cell[][] } {
-  const updatedBoard = [...board];
+  const updatedBoard = rebuildBoard(board);
   let [fx, fy] = getCoordsFirstFreeCell(updatedBoard);
 
   updatedBoard[y][x].hasMine = false;
@@ -36,26 +44,36 @@ export function replaceMine(
 }
 
 export function showAllMines(board: Cell[][]): { board: Cell[][] } {
-  const updatedBoard = [...board];
-  updatedBoard.forEach((row) =>
-    row.forEach((cell) => {
-      if (cell.hasMine) cell.isRevealed = true;
-    })
-  );
-  return { board: updatedBoard };
+  return {
+    board: board.map((row) =>
+      row.map((cell: Cell) => {
+        return {
+          ...cell,
+          isRevealed: cell.hasMine ? true : cell.isRevealed,
+        };
+      })
+    ),
+  };
 }
 
 export function toggleFlag([x, y]: Coords, board: Cell[][], nFlags: number) {
-  const updatedBoard = [...board];
-  const cell = updatedBoard[y][x];
-  if (cell.hasFlag) {
-    nFlags++;
-    cell.hasFlag = false;
-  } else if (nFlags > 0) {
-    nFlags--;
-    cell.hasFlag = true;
-  }
-  return { board: updatedBoard, nFlags };
+  return {
+    board: board.map((row, cy) =>
+      row.map((cell, cx) => {
+        if (cx === x && cy === y) {
+          if (cell.hasFlag) {
+            nFlags++;
+            return { ...cell, hasFlag: false };
+          } else if (nFlags > 0) {
+            nFlags--;
+            return { ...cell, hasFlag: true };
+          }
+        }
+        return { ...cell };
+      })
+    ),
+    nFlags,
+  };
 }
 
 export function showAndExpand(
@@ -65,11 +83,11 @@ export function showAndExpand(
 ): { board: Cell[][]; cellsLeft: number } {
   const rows = board.length;
   const cols = board[0].length;
-  const updatedBoard = [...board];
+  const updatedBoard = rebuildBoard(board);
 
   const revealCell = (x: number, y: number) => {
     const cell = updatedBoard[y][x];
-    if (cell.isRevealed || cell.hasFlag) return;
+    if (cell.isRevealed || cell.hasFlag || cell.hasMine) return;
     cell.isRevealed = true;
     cellsLeft--;
     if (cell.proximity > 0) return;
@@ -81,6 +99,5 @@ export function showAndExpand(
     }
   };
   revealCell(x, y);
-
   return { board: updatedBoard, cellsLeft };
 }

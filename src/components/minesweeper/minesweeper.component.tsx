@@ -5,7 +5,6 @@ import { MessageBox } from "./messagebox/message.component";
 import { Levels } from "./levels/levels.component";
 import { MinesweeperContext } from "../../providers";
 import { ActionType } from "../../state";
-
 import { LEVELS } from "../../constants";
 
 export default function Minesweeper() {
@@ -31,7 +30,7 @@ export default function Minesweeper() {
     const value = (e.target as HTMLButtonElement).value;
     dispatch({
       type: ActionType.CHANGE_LEVEL,
-      payload: { level: LEVELS[value] },
+      level: LEVELS[value],
     });
   };
 
