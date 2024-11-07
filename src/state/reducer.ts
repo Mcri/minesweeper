@@ -46,7 +46,6 @@ export const reducer = (state: GameState, action: GameAction): GameState => {
         ...toggleFlag(action.coords, state.board, state.nFlags),
       };
     case ActionType.REPLACE_MINE:
-      console.log("REPLACE MINE ON FIRST CLICK");
       return {
         ...state,
         ...replaceMine(action.coords, state.board),

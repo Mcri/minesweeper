@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useReducer } from "react";
 import { INITIAL_GAME_STATE } from "../constants";
-import { GameAction } from "../state/actions";
+import { GameAction } from "../state";
 import { GameState } from "../types";
 
 export const MinesweeperContext = createContext<
